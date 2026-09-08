@@ -6,30 +6,15 @@ This commit resolves {replace with ticket link placeholder}
 
 - Explain the implementation goals being solved or the feature with the reviewer in mind
 - Mention any relevant issues, insights, or alternatives considered to be shared with the reviewer.
-
-## Accessibility
-
-- [ ] I have made sure this works with a screenreader!
-  - [ ] All actions can be performed by a screenreader user
-  - [ ] All information available to a sighted user is equivalently available via the screenreader
-    - [ ] Headings do not skip levels, and are a good "content summary" of the page
-    - [ ] Keyboard-tabbing/screenreader traversal order makes sense
-    - [ ] All visual information associated with a form field (labels, descriptions, errors) is
-          programmatically associated with that field
-    - [ ] Any user actions trigger screenreader feedback to inform what is happening
-- [ ] I have checked this with the [WAVE extension](https://wave.webaim.org/extension/).
+- If detection logic changed, confirm the `warn` and `error` variants of the affected language
+  plugin(s) were kept behaviorally identical except for severity.
 
 ## Steps to test
 
 - Describe how a reviewer should test the changes, including:
-  - Unit/integration/manual tests
-  - Test data used
-  - New migrations or libraries
-
-## Screenshots (for visual changes)
-
-- Before
-- After
+  - Fixture cases added or changed in `tests/support/cases.ts`
+  - New literal kinds, languages, or boundary conditions covered
+  - `pnpm check` and `pnpm test` output
 
 ## Notes
 

@@ -36,14 +36,26 @@ body:
       placeholder: 1. Do this. 2. Do that. 3. See the expected behavior.
     validations:
       required: true
-  - type: dropdown
-    id: browsers
+  - type: input
+    id: biome-version
     attributes:
-      label: What browsers are you seeing the problem on?
+      label: Biome version
+      description: Output of `biome --version`
+      placeholder: "2.5.10"
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Which plugin language was affected?
       multiple: true
       options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
-        - Android browser
+        - JavaScript/TypeScript
+        - JSON
+        - CSS
+  - type: textarea
+    id: snippet
+    attributes:
+      label: Minimal snippet
+      description: The smallest source snippet that reproduces the false positive or false negative.
+      render: shell
