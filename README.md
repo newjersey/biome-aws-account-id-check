@@ -1,252 +1,152 @@
-# Innovation Web Monorepo Templates
+# biome-aws-account-id-check
 
-This repository is a pnpm workspace template for New Jersey Innovation Authority applications. It
-includes independent Next.js App Router, static-first Astro, server-rendered Astro React, Vite
-React, Hono API, and FastAPI applications, TypeScript, Python, Grove, Biome, Ruff, Vitest,
-pytest, browser accessibility checks, Amplify configuration, Lambda-ready builds, and production
-container targets.
+A [Biome](https://biomejs.dev) [GritQL linter plugin](https://biomejs.dev/linter/plugins/) that
+flags 12-digit AWS account IDs in JavaScript, TypeScript, JSX, TSX, JSON, JSONC, and CSS source.
 
-![Homepage of the New Jersey Digital Service Starter template, showing the State header, primary navigation, and a hero section reading "A New Jersey foundation: Build clear, accessible public services" with an "Explore Grove" button](./screenshot.webp)
+## Why
 
-## Architecture
+AWS account IDs are always exactly 12 digits. They are not secret, but committing them to source
+control makes it easy to accidentally couple code to one account, leak account structure in public
+repositories, or paste the wrong environment's ID into a script. This plugin catches them before
+they land in a commit.
 
-The root workspace owns shared developer tooling, dependency policy, CI, and deployment entry
-points. Each application owns its framework, runtime, tests, and container:
+## Scope and limitations
 
-- [`packages/nextjs-template`](packages/nextjs-template/README.md) is a Next.js App Router
-  application using React and next-intl.
-- [`packages/astro-template`](packages/astro-template/README.md) is a static-first Astro application
-  using Grove's packaged USWDS browser behavior.
-- [`packages/astro-react-template`](packages/astro-react-template/README.md) is a server-rendered
-  Astro application using React Islands, Trussworks React-USWDS, and Grove.
-- [`packages/vite-template`](packages/vite-template/README.md) is a Vite React and TypeScript
-  single-page application using React Router and Trussworks React-USWDS.
-- [`packages/hono-template`](packages/hono-template/README.md) is a Hono and TypeScript API
-  application with Node.js, AWS Lambda, Amplify Hosting, and container targets.
-- [`packages/fastapi-template`](packages/fastapi-template/README.md) is a FastAPI and Python API
-  application with Uvicorn, AWS Lambda, and container targets.
+Biome's GritQL plugin engine can only analyze the syntax trees it parses: JavaScript, TypeScript,
+JSX, TSX, JSON, JSONC, and CSS. It **cannot** scan Markdown, YAML, Terraform, Python, `.env` files,
+or any other file type — Biome plugins do not have a "plain text" mode. If your AWS account IDs
+live in Terraform state, CloudFormation templates, or documentation, this plugin will not see them.
 
-The templates intentionally do not share application code. A derived repository can keep either
-application, keep any combination, or add other workspace packages without changing the root
-verification commands.
+Within the supported file types, the plugin flags:
 
-The four browser application templates install Grove through `@newjersey/njwds`. Their package
-lifecycle scripts validate the installed distribution and generate an ignored
-`public/assets/grove` directory before development, builds, production startup, and accessibility
-tests. The Hono and FastAPI API templates have no Grove dependency.
+- JavaScript/TypeScript/JSX/TSX: string literals, JSX attribute string values, and numeric
+  literals.
+- JSON/JSONC: string values and number values.
+- CSS: string literals (for example, a `content` declaration value).
 
-The React applications use Trussworks components when their markup preserves Grove's documented
-contract. They use React-owned Grove views for New Jersey-specific patterns and do not load USWDS
-JavaScript.
+Detection matches an exact run of 12 digits bounded by a non-word character (or the start/end of
+the literal). This means:
+
+- `"534827169203"` matches.
+- `"034827169203"` matches — a leading zero is still 12 digits.
+- `"arn:aws:iam::534827169203:role/Example"` matches — the colons on either side of the ID are
+  non-word boundaries.
+- `"12345678901"` (11 digits) and `"1234567890123"` (13 digits) do **not** match.
+- `"id_534827169203"` does **not** match, because `_` is a word character and does not create a
+  boundary immediately before the digit run. Separate an embedded ID with a non-word character
+  (such as `-`, `:`, or a space) for the plugin to catch it.
+
+The plugin cannot know whether a matched value is a real AWS account ID or an unrelated 12-digit
+number (an order number, a phone number, a serial number). Treat diagnostics as a prompt to check,
+not as proof of a leak, and use suppression comments (below) for confirmed false positives.
+
+### Known example account IDs are ignored
+
+Real-world code, tests, and documentation are full of AWS's own placeholder account ID and
+obviously-fake repeated-digit IDs. Flagging those would make the plugin too noisy to keep enabled,
+so the following 12-digit values never produce a diagnostic, even when embedded in a larger string
+such as an ARN:
+
+- `123456789012` — the account ID AWS uses throughout its own documentation, IAM policy examples,
+  and CloudFormation/Terraform samples.
+- Every repeated-digit ID from `000000000000` through `999999999999` (`111111111111`,
+  `222222222222`, and so on) — the conventional placeholder pattern used in tests and examples.
+
+This exclusion list is intentionally small and exact. It does not attempt to detect "looks fake"
+patterns beyond these well-known values, so an incrementing ID like `123456789013` or a
+project-specific placeholder will still be flagged. Use a suppression comment for those.
 
 ## Installation
 
-Use Node.js 26.7.0 and the pnpm version declared in `package.json`. The FastAPI package additionally
-requires uv 0.11.2 or newer and Python 3.14; uv installs the pinned Python version when it is not
-already available.
+```bash
+npm install --save-dev biome-aws-account-id-check
+```
+
+## Usage
+
+Biome does not let a consuming `biome.json` override a plugin diagnostic's severity, so this
+package ships two behaviorally identical variants of each language plugin. Choose the paths that
+match the severity you want:
+
+```jsonc
+// biome.json
+{
+  "plugins": [
+    "./node_modules/biome-aws-account-id-check/plugins/warn/javascript/aws-account-id.grit",
+    "./node_modules/biome-aws-account-id-check/plugins/warn/json/aws-account-id.grit",
+    "./node_modules/biome-aws-account-id-check/plugins/warn/css/aws-account-id.grit",
+  ],
+}
+```
+
+To fail CI instead of warning, register the `error` variants instead:
+
+```jsonc
+// biome.json
+{
+  "plugins": [
+    "./node_modules/biome-aws-account-id-check/plugins/error/javascript/aws-account-id.grit",
+    "./node_modules/biome-aws-account-id-check/plugins/error/json/aws-account-id.grit",
+    "./node_modules/biome-aws-account-id-check/plugins/error/css/aws-account-id.grit",
+  ],
+}
+```
+
+You do not have to register all three languages. Omit whichever `.grit` file does not apply to
+your project.
+
+### Restricting which files the plugin runs on
+
+Biome lets you scope a plugin with an `includes` list. Because `includes` matches against the full
+file path, exclusion patterns need a `**/` prefix to match a directory at any depth:
+
+```jsonc
+// biome.json
+{
+  "plugins": [
+    {
+      "path": "./node_modules/biome-aws-account-id-check/plugins/error/javascript/aws-account-id.grit",
+      "includes": ["**", "!**/fixtures/**", "!**/*.test.ts"],
+    },
+  ],
+}
+```
+
+### Suppressing a diagnostic
+
+Biome's plugin name is a `.grit` file's base name without the extension. Every variant in this
+package uses the same base name, `aws-account-id`, so the same suppression comment works
+regardless of which severity or language variant a project registers:
+
+```ts
+// biome-ignore lint/plugin/aws-account-id: this is a synthetic test fixture, not a real account ID
+const fixtureAccountId = "534827169203";
+```
+
+See Biome's [suppression documentation](https://biomejs.dev/analyzer/suppressions/) for top-level
+and range suppression forms.
+
+## Development
+
+Use the Node.js version in `.nvmrc` and the pnpm version pinned in `package.json`:
 
 ```bash
 npm install --global pnpm@11.21.0
 pnpm install --frozen-lockfile
 ```
 
-All direct dependencies are exact versions. Add or update packages with pnpm's `--save-exact`
-option, and commit the resulting `pnpm-lock.yaml`.
-
-## Development
-
-Run the application you are working on explicitly:
-
-```bash
-pnpm --filter @newjersey/nextjs-template dev
-pnpm --filter @newjersey/astro-template dev
-pnpm --filter @newjersey/astro-react-template dev
-pnpm --filter @newjersey/vite-template dev
-pnpm --filter @newjersey/hono-template dev
-pnpm --filter @newjersey/fastapi-template dev
-```
-
-Each development server uses `http://localhost:3000`, so run one at a time unless you override a
-framework's port.
-
-Root commands verify every workspace package that implements the corresponding script:
-
 ```bash
 pnpm format
 pnpm lint
 pnpm check
 pnpm test
-pnpm build
-pnpm test:accessibility
 ```
 
-`pnpm check` runs Biome plus every package's formatter check, linter, and type checker. Browser
-accessibility tests run sequentially so package-local servers do not compete for a port.
-
-## Containers
-
-All package Dockerfiles use pinned multi-architecture image indexes and leave the target platform
-to the builder. Add `--platform linux/amd64` to a build command when the deployment environment
-requires an amd64 image.
-
-Each application owns its Dockerfile. Build and run the Next.js production image:
-
-```bash
-docker build --file packages/nextjs-template/Dockerfile --target production --tag innovation-nextjs-template:local .
-docker run --rm --publish 3000:3000 innovation-nextjs-template:local
-```
-
-Start the Next.js development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/nextjs-template/compose.yaml up --build
-```
-
-Build and run the Astro production image:
-
-```bash
-docker build --file packages/astro-template/Dockerfile --target production --tag innovation-astro-template:local .
-docker run --rm --publish 3000:3000 innovation-astro-template:local
-```
-
-Start the Astro development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/astro-template/compose.yaml up --build
-```
-
-Build and run the Astro React production image:
-
-```bash
-docker build --file packages/astro-react-template/Dockerfile --target production --tag innovation-astro-react-template:local .
-docker run --rm --publish 3000:3000 innovation-astro-react-template:local
-```
-
-Start the Astro React development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/astro-react-template/compose.yaml up --build
-```
-
-Build and run the Vite production image:
-
-```bash
-docker build --file packages/vite-template/Dockerfile --target production --tag innovation-vite-template:local .
-docker run --rm --publish 3000:3000 innovation-vite-template:local
-```
-
-Start the Vite development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/vite-template/compose.yaml up --build
-```
-
-Build and run the Hono production image:
-
-```bash
-docker build --file packages/hono-template/Dockerfile --target production --tag innovation-hono-template:local .
-docker run --rm --publish 3000:3000 innovation-hono-template:local
-```
-
-Start the Hono development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/hono-template/compose.yaml up --build
-```
-
-Build and run the FastAPI production image:
-
-```bash
-docker build --file packages/fastapi-template/Dockerfile --target production --tag innovation-fastapi-template:local .
-docker run --rm --publish 3000:3000 innovation-fastapi-template:local
-```
-
-Start the FastAPI development container with its package-owned Compose file:
-
-```bash
-docker compose --file packages/fastapi-template/compose.yaml up --build
-```
-
-The Next.js image runs its standalone Node.js server. The Astro React image runs the Node compute
-entrypoint generated for Amplify. The Astro and Vite images serve static output from unprivileged
-nginx processes. The Hono image runs its bundled Node.js server as an unprivileged user. The
-FastAPI image runs Uvicorn as an unprivileged user. The Vite nginx configuration falls back to
-`index.html` for React Router application routes.
-
-## Amplify
-
-`amplify.yml` defines five monorepo application roots. Create one Amplify application for each
-deployed package, connected to the same repository and branch:
-
-| Application | `AMPLIFY_MONOREPO_APP_ROOT` | Artifact |
-| --- | --- | --- |
-| Next.js | `packages/nextjs-template` | `packages/nextjs-template/.next` |
-| Astro | `packages/astro-template` | `packages/astro-template/dist` |
-| Astro React | `packages/astro-react-template` | `packages/astro-react-template/.amplify-hosting` |
-| Vite | `packages/vite-template` | `packages/vite-template/dist` |
-| Hono | `packages/hono-template` | `packages/hono-template/.amplify-hosting` |
-
-Each Amplify application selects its matching entry from the shared build specification. The
-builds remain independent while using the same frozen workspace lockfile.
-
-The Hono build emits a self-contained Amplify Hosting compute artifact. It runs the same bundled
-Node server used by the package's production container.
-
-The FastAPI package is deliberately absent from `amplify.yml`. Amplify can execute Python during a
-build, but Amplify Hosting compute requires a Node.js entrypoint. Deploy FastAPI through Lambda or
-containers; an Amplify-hosted frontend can consume that API separately.
-
-The Vite application also requires Amplify's recommended single-page application 200 rewrite from
-extensionless routes to `/index.html`. Configure that rule in the Vite Amplify application's
-Hosting rewrite settings while excluding requests for files with extensions.
-
-## Lambda
-
-The Hono and FastAPI packages each build a Lambda-ready handler and artifact:
-
-```bash
-pnpm --filter @newjersey/hono-template build
-pnpm --filter @newjersey/fastapi-template build
-```
-
-Hono's build produces `dist/lambda.mjs` (handler `lambda.handler`, Node.js 22 runtime). FastAPI's
-build produces a `dist` directory (handler `fastapi_template.lambda_handler.handler`, Python 3.14
-runtime) for a target architecture; pass `--architecture arm64` to build the `arm64` artifact
-instead of the `x86_64` default. The Hono targets use the same `src/app.ts` route tree through
-target-specific adapters. FastAPI uses one ASGI application for Uvicorn, Mangum, Lambda, and
-containers.
-
-This template does not include Lambda function infrastructure, API Gateway configuration, or
-networking. A derived project's own infrastructure (CDK, SAM, Terraform, or another tool) owns the
-Lambda function resource and whatever sits in front of it.
-
-## AWS Deployment Notes
-
-Available deployment shapes vary by project and account. This template supports, in any
-combination:
-
-- **Amplify Hosting** for the browser application packages and the Hono Node.js target.
-- **AWS Lambda** for the Hono and FastAPI handlers, behind an API Gateway a project's
-  infrastructure provisions.
-- **Containers** (any of the six packages) on ECS Fargate or another container platform, behind an
-  internal load balancer where one is required.
-
-Some New Jersey Innovation Authority AWS accounts restrict API Gateway to private REST APIs only
-(no edge-optimized or regional REST APIs, and no HTTP APIs) and do not permit public load
-balancers. Confirm current account constraints before choosing a deployment shape, and encode them
-in the project's own infrastructure rather than in this template.
-
-## Using This Template
-
-After creating a repository from this template:
-
-1. Choose which application packages the project needs and remove unused examples.
-2. Replace repository and application metadata in the root and retained package manifests.
-3. Replace starter content in each retained package's `content/messages` directory.
-4. Update `README.template.md` and rename it to `README.md` when project documentation is ready.
-5. Update the supported release information in `SECURITY.md`.
-6. Configure one Amplify application for each deployed package, provision Lambda infrastructure for
-   a deployed handler, or run a package's production container.
+`pnpm test` runs the Node.js built-in test runner (`node --test "tests/**/*.test.ts"`). Each test
+spawns the real `biome` CLI against a fixture file in an isolated temporary directory and inspects
+the JSON reporter output — there is no mocking of Biome itself. See `tests/support/cases.ts` for
+the boundary cases (exact match, leading zero, 11-digit and 13-digit non-matches, embedded IDs,
+and the known-placeholder exclusions) covered for every language and severity.
 
 ## Contributing
 
@@ -256,11 +156,6 @@ and review standards.
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
-
-## Acknowledgements
-
-Credit goes to [Sanni](https://github.com/sannidhishukla) for starting the conversation
-that led to these templates.
 
 ## Disclaimer
 

@@ -16,7 +16,7 @@ You do not have to write code to contribute. All of the following are welcome:
 - **Bug reports** — something is broken or behaving unexpectedly
 - **Feature requests** — an idea that would make this more useful
 - **Documentation improvements** — a section that is unclear, missing, or out of date
-- **Accessibility feedback** — anything that makes the project harder to use
+- **Detection feedback** — a false positive or false negative you have hit in real code
 - **Code** — bug fixes, features, tests, or refactors
 
 ## Code of Conduct
@@ -88,11 +88,10 @@ A few requirements before requesting review:
 
 1. **Keep PRs small.** A pull request should be reviewable in one sitting. If your change is large,
    decompose it into a sequence of focused, independently-mergeable increments.
-2. **All automated checks must pass.** Biome, TypeScript, unit tests, accessibility tests,
-   production builds, `pnpm audit`, and any other CI
-   checks must be green before you request a human review.
+2. **All automated checks must pass.** Biome, unit tests, `pnpm audit`, and any other CI checks
+   must be green before you request a human review.
 3. **Fill out the PR template.** Explain what was done and why, list the steps to test it, and note
-   any accessibility considerations.
+   whether both the `warn` and `error` plugin variants were kept in sync.
 
 If no reviewer is assigned within a few days, email
 [team@innovation.nj.gov](mailto:team@innovation.nj.gov).
@@ -115,9 +114,8 @@ question.
 
 ## Code style
 
-Biome and package-owned tooling are enforced automatically on every commit and in CI. Biome handles
-JavaScript, TypeScript, JSON, and CSS, while Python packages use Ruff for formatting and linting and
-ty for static type checking.
+Biome is enforced automatically on every commit and in CI. It handles formatting and linting for
+JavaScript, TypeScript, JSON, CSS, and the repository's own `.grit` plugin files.
 
 Install dependencies and run repository commands with the pinned pnpm version:
 
@@ -126,8 +124,6 @@ npm install --global pnpm@11.21.0
 pnpm install --frozen-lockfile
 pnpm check
 pnpm test
-pnpm build
-pnpm test:accessibility
 ```
 
 Direct dependency versions must be exact. Do not add `latest`, caret, tilde, wildcard, branch, or

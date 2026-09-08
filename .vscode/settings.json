@@ -13,39 +13,15 @@
   "files.insertFinalNewline": true,
 
   "js/ts.experimental.useTsgo": true,
-  "python.defaultInterpreterPath": "${workspaceFolder}/packages/fastapi-template/.venv",
-  "ruff.importStrategy": "fromEnvironment",
-  "ty.diagnosticMode": "workspace",
-  "ty.importStrategy": "fromEnvironment",
 
   "git.blame.editorDecoration.enabled": false,
   "git.blame.statusBarItem.enabled": true,
 
   "files.watcherExclude": {
-    "**/.amplify-hosting": true,
-    "**/.next": true,
-    "**/.astro": true,
-    "**/.venv": true,
-    "**/__pycache__": true,
-    "**/dist": true,
-    "**/dist-playwright": true,
-    "**/public/assets/grove": true,
-    "**/test-results": true,
-    "**/playwright-report": true,
     "**/coverage": true
   },
 
   "search.exclude": {
-    "**/.amplify-hosting": true,
-    "**/.next": true,
-    "**/.astro": true,
-    "**/.venv": true,
-    "**/__pycache__": true,
-    "**/dist": true,
-    "**/dist-playwright": true,
-    "**/public/assets/grove": true,
-    "**/test-results": true,
-    "**/playwright-report": true,
     "**/coverage": true,
     "pnpm-lock.yaml": true
   },
@@ -61,14 +37,6 @@
   "[markdown]": {
     "editor.wordWrap": "on",
     "editor.formatOnSave": false
-  },
-
-  "[python]": {
-    "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.ruff": "explicit",
-      "source.organizeImports.ruff": "explicit"
-    }
   },
 
   "[yaml]": {

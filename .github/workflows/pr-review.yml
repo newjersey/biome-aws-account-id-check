@@ -9,7 +9,7 @@ on:
 jobs:
   pr-review:
     if: ${{ github.event.label.name == 'pr-review' }}
-    uses: newjersey/innovation-shared-actions/.github/workflows/pickaroo.yml@314d5da9f74389684e4ab72f04a1ccf51444c312
+    uses: newjersey/innovation-shared-actions/.github/workflows/pickaroo.yml@3603ed4be64e411c462ee23a6fb6045c3ce134f1
     secrets: inherit
     permissions: {}
     with:
@@ -20,7 +20,7 @@ jobs:
       slack_as_author: false # default, set to true to notify as the PR author in slack
   pr-show:
     if: ${{ github.event.label.name == 'pr-show' }}
-    uses: newjersey/innovation-shared-actions/.github/workflows/pickaroo.yml@314d5da9f74389684e4ab72f04a1ccf51444c312
+    uses: newjersey/innovation-shared-actions/.github/workflows/pickaroo.yml@3603ed4be64e411c462ee23a6fb6045c3ce134f1
     secrets: inherit
     permissions: {}
     with:

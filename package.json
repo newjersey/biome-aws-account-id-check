@@ -1,46 +1,51 @@
 {
-  "name": "innovation-monorepo-template",
+  "name": "biome-aws-account-id-check",
   "version": "0.1.0",
-  "description": "Next.js, Astro, Astro React, Vite, Hono, and FastAPI monorepo templates for the New Jersey Innovation Authority",
-  "private": true,
-  "repository": "github:newjersey/innovation-monorepo-template",
-  "homepage": "https://github.com/newjersey/innovation-monorepo-template",
-  "bugs": "https://github.com/newjersey/innovation-monorepo-template/issues",
+  "description": "Biome GritQL plugin that flags 12-digit AWS account IDs in JavaScript, TypeScript, JSON, and CSS source, with configurable warn or error severity.",
+  "type": "module",
+  "repository": "github:newjersey/biome-aws-account-id-check",
+  "homepage": "https://github.com/newjersey/biome-aws-account-id-check",
+  "bugs": "https://github.com/newjersey/biome-aws-account-id-check/issues",
+  "files": [
+    "plugins",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "pnpm --recursive --if-present run build",
-    "test": "pnpm --recursive --if-present run test",
-    "test:accessibility:install": "pnpm --recursive --workspace-concurrency=1 --if-present run test:accessibility:install",
-    "test:accessibility": "pnpm --recursive --workspace-concurrency=1 --if-present run test:accessibility",
-    "typecheck": "pnpm --recursive --if-present run typecheck",
-    "format": "biome format --write . && pnpm format:packages",
-    "format:packages": "pnpm --recursive --if-present run format",
-    "format:check": "biome format . && pnpm format:check:packages",
-    "format:check:packages": "pnpm --recursive --if-present run format:check",
-    "lint": "biome lint . && pnpm lint:packages",
-    "lint:packages": "pnpm --recursive --if-present run lint",
-    "lint:fix": "biome lint --write . && pnpm lint:fix:packages",
-    "lint:fix:packages": "pnpm --recursive --if-present run lint:fix",
-    "check": "biome check . && pnpm format:check:packages && pnpm lint:packages && pnpm typecheck",
-    "check:fix": "biome check --write . && pnpm lint:fix:packages && pnpm format:packages",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "test": "node --test \"tests/**/*.test.ts\"",
     "prepare": "husky"
   },
-  "keywords": [],
+  "keywords": [
+    "biome",
+    "biome-plugin",
+    "gritql",
+    "aws",
+    "aws-account-id",
+    "lint",
+    "linter",
+    "security"
+  ],
   "author": {
     "name": "New Jersey Innovation Authority",
     "url": "https://github.com/newjersey"
   },
   "license": "MIT",
   "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=22.6.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
     "husky": "9.1.7",
     "lint-staged": "17.3.0"
   },
   "lint-staged": {
-    "*": "biome check --write --no-errors-on-unmatched",
-    "packages/fastapi-template/**/*.py": [
-      "uv run --project packages/fastapi-template --locked ruff check --fix",
-      "uv run --project packages/fastapi-template --locked ruff format"
-    ]
+    "*": "biome check --write --no-errors-on-unmatched"
   }
 }

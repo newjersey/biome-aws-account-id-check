@@ -1,0 +1,17 @@
+engine biome(1.0)
+language css
+
+// Flags CSS string literals that contain an exact 12-digit run, which is the
+// format of an AWS account ID. Word boundaries on both sides of `\d{12}` keep
+// 11-digit and 13-digit runs from matching, since a boundary requires a
+// transition between a digit and a non-word character.
+//
+// Well-known placeholder IDs are excluded so documentation and test fixtures
+// do not trigger a diagnostic: the ten repeated-digit IDs (000000000000
+// through 999999999999) and 123456789012, which is AWS's own documentation
+// placeholder account ID.
+CssString() as $match where {
+  $match <: r".*\b\d{12}\b.*",
+  $match <: not r".*\b(?:000000000000|111111111111|222222222222|333333333333|444444444444|555555555555|666666666666|777777777777|888888888888|999999999999|123456789012)\b.*",
+  register_diagnostic(span=$match, message="This value contains a 12-digit AWS account ID. Do not commit AWS account IDs to version control; load them from configuration or environment variables instead.", severity="warn")
+}
