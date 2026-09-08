@@ -1,0 +1,28 @@
+[dir] .usa-nav-container [data-language-selector-placement="desktop"] .usa-language__submenu {
+  left: auto;
+  right: auto;
+  inset-inline-end: 0;
+}
+
+@media (max-width: 63.99em) {
+  [dir] .usa-nav-container [data-language-selector-placement="mobile"] {
+    position: static;
+  }
+
+  [dir] .usa-nav-container [data-language-selector-placement="mobile"] .usa-language__link {
+    margin-top: 0;
+  }
+
+  [dir] .usa-nav-container [data-language-selector-placement="mobile"] .usa-language__primary-item {
+    position: static;
+  }
+
+  [dir] .usa-nav-container [data-language-selector-placement="mobile"] .usa-language__submenu {
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: calc(100vh - 5.75rem);
+    overflow-y: auto;
+  }
+}

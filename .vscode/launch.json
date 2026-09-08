@@ -1,0 +1,78 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug application",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/nextjs-template",
+      "program": "${workspaceFolder}/packages/nextjs-template/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/packages/nextjs-template"
+      }
+    },
+    {
+      "name": "Astro: debug application",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @newjersey/astro-template dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "Local:?\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/packages/astro-template"
+      }
+    },
+    {
+      "name": "Astro React: debug application",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @newjersey/astro-react-template dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "Local:?\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/packages/astro-react-template"
+      }
+    },
+    {
+      "name": "Vite: debug application",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @newjersey/vite-template dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "Local:?\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/packages/vite-template"
+      }
+    },
+    {
+      "name": "Hono: debug API",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @newjersey/hono-template dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "FastAPI: debug API",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @newjersey/fastapi-template dev",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

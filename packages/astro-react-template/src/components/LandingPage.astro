@@ -1,0 +1,88 @@
+---
+import { GROVE_DOCUMENTATION_HREF } from "@/config/externalLinks";
+import { resolveFeedbackWidgetConfig } from "@/config/feedbackWidget";
+import { MESSAGE_CATALOG } from "@/content/messages/catalog";
+import type { AppLocale } from "@/i18n/locales";
+import { textDirectionForLocale } from "@/i18n/locales";
+import { Banner } from "@/components/Banner";
+import { Footer } from "@/components/Footer";
+import { GraphicList } from "@/components/GraphicList";
+import { Hero } from "@/components/Hero";
+import { Identifier } from "@/components/Identifier";
+import { FeedbackWidgetController } from "@/controllers/FeedbackWidgetController";
+import { HeaderController } from "@/controllers/HeaderController";
+import { PageInteractions } from "@/controllers/PageInteractions";
+import BaseLayout from "@/src/layouts/BaseLayout.astro";
+
+export interface Props {
+  readonly locale: AppLocale;
+  readonly pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+const messages = MESSAGE_CATALOG[locale];
+const direction = textDirectionForLocale(locale);
+const feedbackWidgetConfig = resolveFeedbackWidgetConfig({ locale });
+const features = [
+  messages.home.accessibleFeature,
+  messages.home.consistencyFeature,
+  messages.home.developmentFeature,
+  messages.home.operationsFeature,
+];
+---
+
+<BaseLayout
+  description={messages.home.metadataDescription}
+  locale={locale}
+  title={messages.home.metadataTitle}
+>
+  <PageInteractions client:load />
+  <a
+    class="usa-skipnav"
+    data-focus-target="main-content"
+    href="#main-content"
+  >
+    {messages.shell.skipLinkLabel}
+  </a>
+  <Banner content={messages.shell} direction={direction} />
+  <HeaderController
+    client:load
+    content={messages.shell}
+    currentLocale={locale}
+    direction={direction}
+    pathname={pathname}
+  />
+  <main id="main-content">
+    <Hero content={messages.home} />
+    <section class="grid-container usa-section" id="features">
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-4">
+          <h2 class="font-heading-xl margin-top-0">{messages.home.featureHeading}</h2>
+        </div>
+        <div class="usa-prose tablet:grid-col-8">
+          <p class="usa-intro">{messages.home.featureIntroduction}</p>
+        </div>
+      </div>
+    </section>
+    <GraphicList features={features} label={messages.home.featureHeading} />
+    <section class="usa-section" id="next-steps">
+      <div class="grid-container">
+        <h2 class="font-heading-xl margin-y-0">{messages.home.callToActionHeading}</h2>
+        <p class="usa-intro">{messages.home.callToActionIntroduction}</p>
+        <a class="usa-button usa-button--big" href={GROVE_DOCUMENTATION_HREF}>
+          {messages.home.callToActionLabel}
+        </a>
+      </div>
+    </section>
+  </main>
+  {
+    feedbackWidgetConfig.status === "enabled" ? (
+      <FeedbackWidgetController
+        client:idle={{ timeout: 2_000 }}
+        config={feedbackWidgetConfig}
+      />
+    ) : null
+  }
+  <Footer content={messages.footer} />
+  <Identifier content={messages.identifier} />
+</BaseLayout>

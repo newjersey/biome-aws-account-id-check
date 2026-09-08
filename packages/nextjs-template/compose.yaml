@@ -1,0 +1,18 @@
+services:
+  nextjs-template:
+    build:
+      context: ../..
+      dockerfile: packages/nextjs-template/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../..:/workspace
+      - root-node-modules:/workspace/node_modules
+      - app-node-modules:/workspace/packages/nextjs-template/node_modules
+      - app-next-cache:/workspace/packages/nextjs-template/.next
+
+volumes:
+  root-node-modules:
+  app-node-modules:
+  app-next-cache:

@@ -1,0 +1,128 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": [
+      "**",
+      "!**/.yarn/*",
+      "!**/.next",
+      "!**/.astro",
+      "!**/.amplify-hosting",
+      "!**/.venv",
+      "!**/dist",
+      "!**/dist-playwright",
+      "!package-lock.json",
+      "!pnpm-lock.yaml",
+      "!yarn.lock",
+      "!bun.lockb",
+      "!**/public/assets/grove",
+      "!**/public/images/sprite.svg",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!.claude"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "lineWidth": 100,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        "noForEach": "error",
+        "useArrowFunction": "error",
+        "useMaxParams": {
+          "level": "error",
+          "options": { "max": 2 }
+        }
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
+      "style": {
+        "noCommonJs": "error",
+        "noParameterAssign": "error",
+        "noProcessEnv": "error",
+        "useConst": "error",
+        "useExportType": "error",
+        "useImportType": "error",
+        "useNodejsImportProtocol": "error",
+        "useTemplate": "error",
+        "useThrowOnlyError": "error",
+        "useErrorCause": "error"
+      },
+      "suspicious": {
+        "noConsole": "error",
+        "noExplicitAny": "error",
+        "noImportCycles": "error",
+        "noVar": "error",
+        "noNestedPromises": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/nextjs-template/**/*.ts", "packages/nextjs-template/**/*.tsx"],
+      "linter": {
+        "domains": {
+          "next": "recommended",
+          "react": "recommended"
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/astro-react-template/**/*.ts",
+        "packages/astro-react-template/**/*.tsx",
+        "packages/vite-template/**/*.ts",
+        "packages/vite-template/**/*.tsx"
+      ],
+      "linter": {
+        "domains": {
+          "react": "recommended"
+        },
+        "rules": {
+          "performance": {
+            "noImgElement": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      }
+    }
+  ],
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["node", "vitest/globals"]
+  },
+  "include": [
+    ".astro/types.d.ts",
+    "astro.config.ts",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "config/**/*.ts",
+    "content/**/*.ts",
+    "i18n/**/*.ts",
+    "scripts/**/*.ts",
+    "src/**/*.astro",
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "components/**/*.tsx",
+    "controllers/**/*.tsx",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [".amplify-hosting", "dist", "public"]
+}

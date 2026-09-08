@@ -1,0 +1,76 @@
+---
+import { GROVE_DOCUMENTATION_HREF } from "@/config/externalLinks";
+import { resolveFeedbackWidgetConfig } from "@/config/feedbackWidget";
+import { MESSAGE_CATALOG } from "@/content/messages/catalog";
+import type { AppLocale } from "@/i18n/locales";
+import { textDirectionForLocale } from "@/i18n/locales";
+import Banner from "@/src/components/Banner.astro";
+import FeedbackWidget from "@/src/components/FeedbackWidget.astro";
+import Footer from "@/src/components/Footer.astro";
+import GraphicList from "@/src/components/GraphicList.astro";
+import Header from "@/src/components/Header.astro";
+import Hero from "@/src/components/Hero.astro";
+import Identifier from "@/src/components/Identifier.astro";
+import BaseLayout from "@/src/layouts/BaseLayout.astro";
+
+export interface Props {
+  readonly locale: AppLocale;
+}
+
+const { locale } = Astro.props;
+const messages = MESSAGE_CATALOG[locale];
+const direction = textDirectionForLocale(locale);
+const feedbackWidgetConfig = resolveFeedbackWidgetConfig({ locale });
+const features = [
+  messages.home.accessibleFeature,
+  messages.home.consistencyFeature,
+  messages.home.developmentFeature,
+  messages.home.operationsFeature,
+];
+---
+
+<BaseLayout
+  description={messages.home.metadataDescription}
+  locale={locale}
+  title={messages.home.metadataTitle}
+>
+  <a
+    class="usa-skipnav"
+    data-focus-target="main-content"
+    href="#main-content"
+  >
+    {messages.shell.skipLinkLabel}
+  </a>
+  <Banner content={messages.shell} direction={direction} />
+  <Header
+    content={messages.shell}
+    currentLocale={locale}
+    direction={direction}
+  />
+  <main id="main-content">
+    <Hero content={messages.home} />
+    <section class="grid-container usa-section" id="features">
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-4">
+          <h2 class="font-heading-xl margin-top-0">{messages.home.featureHeading}</h2>
+        </div>
+        <div class="usa-prose tablet:grid-col-8">
+          <p class="usa-intro">{messages.home.featureIntroduction}</p>
+        </div>
+      </div>
+    </section>
+    <GraphicList features={features} label={messages.home.featureHeading} />
+    <section class="usa-section" id="next-steps">
+      <div class="grid-container">
+        <h2 class="font-heading-xl margin-y-0">{messages.home.callToActionHeading}</h2>
+        <p class="usa-intro">{messages.home.callToActionIntroduction}</p>
+        <a class="usa-button usa-button--big" href={GROVE_DOCUMENTATION_HREF}>
+          {messages.home.callToActionLabel}
+        </a>
+      </div>
+    </section>
+  </main>
+  <FeedbackWidget config={feedbackWidgetConfig} />
+  <Footer content={messages.footer} />
+  <Identifier content={messages.identifier} />
+</BaseLayout>

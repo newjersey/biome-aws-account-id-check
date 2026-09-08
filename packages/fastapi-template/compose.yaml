@@ -1,0 +1,16 @@
+services:
+  fastapi-template:
+    build:
+      context: ../..
+      dockerfile: packages/fastapi-template/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/workspace/packages/fastapi-template
+      - app-venv:/workspace/packages/fastapi-template/.venv
+      - uv-cache:/root/.cache/uv
+
+volumes:
+  app-venv:
+  uv-cache:

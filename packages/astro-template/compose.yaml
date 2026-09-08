@@ -1,0 +1,18 @@
+services:
+  astro-template:
+    build:
+      context: ../..
+      dockerfile: packages/astro-template/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../..:/workspace
+      - root-node-modules:/workspace/node_modules
+      - app-node-modules:/workspace/packages/astro-template/node_modules
+      - app-astro-cache:/workspace/packages/astro-template/.astro
+
+volumes:
+  root-node-modules:
+  app-node-modules:
+  app-astro-cache:

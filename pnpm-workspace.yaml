@@ -1,0 +1,12 @@
+packages:
+  - "packages/*"
+
+nodeLinker: hoisted
+saveExact: true
+strictPeerDependencies: true
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  sharp: true

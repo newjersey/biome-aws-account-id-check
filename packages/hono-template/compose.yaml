@@ -1,0 +1,16 @@
+services:
+  hono-template:
+    build:
+      context: ../..
+      dockerfile: packages/hono-template/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../..:/workspace
+      - root-node-modules:/workspace/node_modules
+      - app-node-modules:/workspace/packages/hono-template/node_modules
+
+volumes:
+  root-node-modules:
+  app-node-modules:

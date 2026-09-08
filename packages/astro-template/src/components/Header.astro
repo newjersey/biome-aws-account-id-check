@@ -1,0 +1,82 @@
+---
+import { GROVE_DOCUMENTATION_HREF } from "@/config/externalLinks";
+import type { NavigationItem, ShellMessages } from "@/content/messages/types";
+import type { AppLocale, TextDirection } from "@/i18n/locales";
+import { homepagePathForLocale } from "@/i18n/urls";
+import Icon from "@/src/components/Icon.astro";
+import LanguageSelector from "@/src/components/LanguageSelector.astro";
+
+export interface Props {
+  readonly content: ShellMessages;
+  readonly currentLocale: AppLocale;
+  readonly direction: TextDirection;
+}
+
+const { content, currentLocale, direction } = Astro.props;
+const homepagePath = homepagePathForLocale(currentLocale);
+const languageContainerClassName =
+  direction === "rtl"
+    ? "margin-2 desktop:margin-y-0 desktop:margin-left-0 desktop:margin-right-auto"
+    : "margin-2 desktop:margin-y-0 desktop:margin-left-auto desktop:margin-right-0";
+const navigationItems: readonly NavigationItem[] = [
+  { label: content.homeLabel, href: homepagePath, isCurrent: true },
+  { label: content.foundationLabel, href: `${homepagePath}#features` },
+  { label: content.nextStepsLabel, href: `${homepagePath}#next-steps` },
+  { label: content.groveDocumentationLabel, href: GROVE_DOCUMENTATION_HREF },
+];
+---
+
+<div class="usa-overlay"></div>
+<header class="usa-header usa-header--basic">
+  <div class="usa-nav-container position-relative z-500">
+    <div class="usa-navbar">
+      <div class="usa-logo" id="site-logo">
+        <em class="usa-logo__text">
+          <a aria-label={content.homeLabel} href={homepagePath}>{content.siteName}</a>
+        </em>
+      </div>
+      <LanguageSelector
+        content={content.languageSelector}
+        currentLocale={currentLocale}
+        direction={direction}
+        placement="mobile"
+      />
+      <button
+        aria-controls="primary-navigation"
+        aria-expanded="false"
+        class="usa-menu-btn"
+        type="button"
+      >
+        {content.menuLabel}
+      </button>
+    </div>
+    <nav aria-label={content.navigationLabel} class="usa-nav" id="primary-navigation">
+      <button aria-label={content.closeNavigationLabel} class="usa-nav__close" type="button">
+        <Icon name="close" />
+      </button>
+      <ul class="usa-nav__primary usa-accordion">
+        {
+          navigationItems.map((item) => (
+            <li class="usa-nav__primary-item">
+              <a
+                aria-current={item.isCurrent ? "page" : undefined}
+                class={item.isCurrent ? "usa-nav__link usa-current" : "usa-nav__link"}
+                href={item.href}
+              >
+                <span>{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class={languageContainerClassName}>
+        <LanguageSelector
+          content={content.languageSelector}
+          currentLocale={currentLocale}
+          direction={direction}
+          placement="desktop"
+        />
+      </div>
+    </nav>
+  </div>
+</header>

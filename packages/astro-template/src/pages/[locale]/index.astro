@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import LandingPage from "@/src/components/LandingPage.astro";
+import { APP_LOCALES, DEFAULT_LOCALE, hasAppLocale } from "@/i18n/locales";
+
+export const getStaticPaths = (() => {
+  return APP_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => ({
+    params: { locale },
+  }));
+}) satisfies GetStaticPaths;
+
+const localeParam = Astro.params.locale;
+
+if (!localeParam || !hasAppLocale(localeParam)) {
+  throw new Error(`Unsupported locale route: ${localeParam ?? "(missing)"}`);
+}
+
+const locale = localeParam;
+---
+
+<LandingPage locale={locale} />

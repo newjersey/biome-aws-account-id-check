@@ -1,0 +1,22 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+/dist-playwright
+/playwright-report
+/test-results
+
+# production
+/dist
+
+# generated Grove distribution
+/public/assets/grove
+
+# environment
+.env*
+!.env.example
+
+# misc
+.DS_Store
+*.tsbuildinfo

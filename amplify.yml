@@ -1,0 +1,100 @@
+version: 1
+applications:
+  - appRoot: packages/nextjs-template
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - npm install --global pnpm@11.21.0
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @newjersey/nextjs-template build
+      artifacts:
+        baseDirectory: packages/nextjs-template/.next
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - "node_modules/**/*"
+          - "packages/nextjs-template/node_modules/**/*"
+          - "packages/nextjs-template/.next/cache/**/*"
+  - appRoot: packages/astro-template
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - npm install --global pnpm@11.21.0
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @newjersey/astro-template build
+      artifacts:
+        baseDirectory: packages/astro-template/dist
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - "node_modules/**/*"
+          - "packages/astro-template/node_modules/**/*"
+          - "packages/astro-template/.astro/**/*"
+  - appRoot: packages/astro-react-template
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - npm install --global pnpm@11.21.0
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @newjersey/astro-react-template build
+      artifacts:
+        baseDirectory: packages/astro-react-template/.amplify-hosting
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - "node_modules/**/*"
+          - "packages/astro-react-template/node_modules/**/*"
+          - "packages/astro-react-template/.astro/**/*"
+  - appRoot: packages/vite-template
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - npm install --global pnpm@11.21.0
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @newjersey/vite-template build
+      artifacts:
+        baseDirectory: packages/vite-template/dist
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - "node_modules/**/*"
+          - "packages/vite-template/node_modules/**/*"
+  - appRoot: packages/hono-template
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - npm install --global pnpm@11.21.0
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @newjersey/hono-template build
+      artifacts:
+        baseDirectory: packages/hono-template/.amplify-hosting
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - "node_modules/**/*"
+          - "packages/hono-template/node_modules/**/*"

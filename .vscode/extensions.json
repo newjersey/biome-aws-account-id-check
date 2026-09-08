@@ -1,0 +1,28 @@
+{
+  "recommendations": [
+    "astro-build.astro-vscode",
+    "astral-sh.ty",
+    "biomejs.biome",
+    "charliermarsh.ruff",
+    "deque-systems.vscode-axe-linter",
+    "docker.docker",
+    "editorconfig.editorconfig",
+    "github.vscode-github-actions",
+    "ms-python.python",
+    "ms-playwright.playwright",
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "typescriptteam.native-preview",
+    "vitest.explorer"
+  ],
+  "unwantedRecommendations": [
+    "chakrounanas.turbo-console-log",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "firsttris.vscode-jest-runner",
+    "hookyqr.beautify",
+    "ms-python.black-formatter",
+    "ms-python.vscode-pylance",
+    "orta.vscode-jest"
+  ]
+}

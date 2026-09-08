@@ -1,0 +1,78 @@
+---
+import type { IdentifierMessages, NavigationItem } from "@/content/messages/types";
+
+export interface Props {
+  readonly content: IdentifierMessages;
+}
+
+const { content } = Astro.props;
+const newJerseyHref = "https://www.nj.gov/";
+const navigationItems: readonly NavigationItem[] = [
+  { label: content.governorLabel, href: "https://www.nj.gov/governor/admin/about/" },
+  { label: content.lieutenantGovernorLabel, href: "https://www.nj.gov/governor/admin/lt/" },
+  { label: content.homeLabel, href: newJerseyHref },
+  { label: content.servicesLabel, href: "https://www.nj.gov/nj/gov/njgov/alphaserv.html" },
+  { label: content.departmentsLabel, href: "https://www.nj.gov/nj/gov/deptserv/" },
+  { label: content.faqLabel, href: "https://www.nj.gov/faqs/" },
+  { label: content.contactLabel, href: "https://www.nj.gov/nj/feedback.html" },
+  { label: content.privacyLabel, href: "https://www.nj.gov/nj/privacy.html" },
+  { label: content.legalLabel, href: "https://www.nj.gov/nj/legal.html" },
+  { label: content.accessibilityLabel, href: "https://www.nj.gov/nj/accessibility.html" },
+  { label: content.recordsLabel, href: "https://www.nj.gov/opra/" },
+];
+const copyright = content.copyright.replace("{year}", String(new Date().getFullYear()));
+---
+
+<div class="usa-identifier">
+  <section
+    aria-label={content.label}
+    class="usa-identifier__section usa-identifier__section--masthead"
+  >
+    <div class="usa-identifier__container">
+      <div class="usa-identifier__logos">
+        <a class="usa-identifier__logo" href={newJerseyHref}>
+          <img
+            alt={content.logoAlt}
+            class="usa-identifier__logo-img"
+            height="144"
+            src="/assets/grove/dist/img/nj-logo-gray-20.png"
+            width="144"
+          />
+        </a>
+      </div>
+      <div class="usa-identifier__identity">
+        <p class="usa-identifier__identity-disclaimer">
+          {content.disclaimerPrefix}
+          {" "}
+          <a href={newJerseyHref}>{content.stateName}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+  <nav
+    aria-label={content.navigationLabel}
+    class="usa-identifier__section usa-identifier__section--required-links"
+  >
+    <div class="usa-identifier__container">
+      <ul class="usa-identifier__required-links-list">
+        {
+          navigationItems.map((item) => (
+            <li class="usa-identifier__required-links-item">
+              <a class="usa-identifier__required-link usa-link" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+  <section
+    aria-label={content.copyrightLabel}
+    class="usa-identifier__section usa-identifier__section--usagov"
+  >
+    <div class="usa-identifier__container">
+      <div class="usa-identifier__usagov-description">{copyright}</div>
+    </div>
+  </section>
+</div>

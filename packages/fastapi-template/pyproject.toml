@@ -1,0 +1,60 @@
+[project]
+name = "fastapi-template"
+version = "0.1.0"
+description = "FastAPI and Python starter application"
+requires-python = "==3.14.*"
+dependencies = [
+  "fastapi==0.141.1",
+  "mangum==0.22.0",
+  "uvicorn==0.52.4",
+]
+
+[dependency-groups]
+dev = [
+  "httpx2==2.12.0",
+  "pytest==9.1.1",
+  "pytest-cov==7.1.0",
+  "ruff==0.16.5",
+  "ty==0.0.75",
+]
+
+[build-system]
+requires = ["uv_build==0.12.6"]
+build-backend = "uv_build"
+
+[tool.ruff]
+exclude = [".venv", "dist"]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP", "SIM", "C4", "PIE", "ASYNC", "RUF"]
+
+[tool.ty.environment]
+python-version = "3.14"
+
+[tool.ty.rules]
+all = "error"
+
+[tool.ty.src]
+include = ["scripts", "src", "tests"]
+
+[tool.uv]
+required-version = ">=0.11.2"
+
+[tool.pytest.ini_options]
+addopts = [
+  "--cov=fastapi_template",
+  "--cov=scripts",
+  "--cov-branch",
+  "--cov-report=term-missing",
+  "--cov-report=html:coverage/html",
+]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/fastapi_template", "scripts"]
+
+[tool.coverage.report]
+exclude_lines = ["if __name__ == .__main__.:"]
